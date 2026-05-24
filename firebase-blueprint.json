@@ -1,0 +1,47 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Information about a user's gameplay statistics, name, and streaks",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID from Firebase Authentication" },
+        "username": { "type": "string", "description": "Friendly nickname selected by the user" },
+        "cumulativePoints": { "type": "integer", "description": "Total cumulative points across all games" },
+        "highestStreak": { "type": "integer", "description": "Personal best streak in AI infinite mode" },
+        "dailyStreak": { "type": "integer", "description": "Consecutive days completing the Daily Challenge" },
+        "lastPlayed": { "type": "string", "description": "UTC date of last Daily Challenge completion (YYYY-MM-DD)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Profile creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["uid", "username", "cumulativePoints", "highestStreak", "dailyStreak"]
+    },
+    "Submission": {
+      "title": "User Fandom Submission",
+      "description": "A subculture topic proposed by a user for community review",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique submission ID" },
+        "topicName": { "type": "string", "description": "Subculture / fandom name" },
+        "description": { "type": "string", "description": "Description of what they do" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Auditor verification status" },
+        "isReal": { "type": "boolean", "description": "Is it a real fandom or fiction?" },
+        "didYouKnow": { "type": "string", "description": "Underlying backstory or trivia" },
+        "aiExplanation": { "type": "string", "description": "System feedback explanation" },
+        "submittedBy": { "type": "string", "description": "User nickname of submitter" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission/Audit timestamp" }
+      },
+      "required": ["id", "topicName", "description", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile statistics and game states"
+    },
+    "/submissions/{submissionId}": {
+      "schema": "Submission",
+      "description": "User fandom submissions audited by AI and open for public review"
+    }
+  }
+}

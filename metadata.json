@@ -1,0 +1,6 @@
+{
+  "name": "Niche Fandom Guessing Game",
+  "description": "An entertaining trivia game where you guess whether hyper-specific strange fandoms and communities are completely real or totally fabricated. Features daily challenges, a leaderboard, and AI-evaluated community submissions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

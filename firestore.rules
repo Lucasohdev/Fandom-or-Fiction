@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- Users Collection Rules ---
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // Crucial for loading the global leaderboard
+      
+      allow create: if isOwner(userId) 
+        && incoming().uid == request.auth.uid
+        && incoming().username is string && incoming().username.size() <= 100
+        && incoming().cumulativePoints is int && incoming().cumulativePoints >= 0
+        && incoming().highestStreak is int && incoming().highestStreak >= 0
+        && incoming().dailyStreak is int && incoming().dailyStreak >= 0;
+
+      allow update: if isOwner(userId)
+        && incoming().uid == request.auth.uid
+        && incoming().username is string && incoming().username.size() <= 100
+        && incoming().cumulativePoints is int && incoming().cumulativePoints >= existing().cumulativePoints
+        && incoming().highestStreak is int && incoming().highestStreak >= 0
+        && incoming().dailyStreak is int && incoming().dailyStreak >= 0;
+        
+      allow delete: if false;
+    }
+
+    // --- Submissions Collection Rules ---
+    match /submissions/{submissionId} {
+      allow read: if true; // Public ledger is readable by anyone
+      
+      allow create: if isSignedIn()
+        && incoming().id == submissionId
+        && incoming().topicName is string && incoming().topicName.size() <= 200
+        && incoming().description is string && incoming().description.size() <= 1000
+        && incoming().status == "pending"
+        && incoming().submittedBy is string;
+        
+      allow update, delete: if false; // Users cannot modify or erase audited ledger items
+    }
+  }
+}
