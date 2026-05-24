@@ -2,16 +2,14 @@
 <img width="1200" height="475" alt="GHBanner" src="https://files.catbox.moe/62ilix.png" />
 </div>
 
-# Run and deploy your AI Studio app
+# How to run locally:
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/a5062b53-69e9-4fe8-9954-f662f54675d3
 
 ## Run Locally
 
 **Prerequisites:**  Node.js
-
 
 1. Install dependencies:
    `npm install`
